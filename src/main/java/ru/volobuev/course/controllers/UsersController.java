@@ -48,8 +48,9 @@ public class UsersController {
     @PatchMapping(params = "id")
     public String update(
             @ModelAttribute("user") User user,
-            @RequestParam(name = "id", required = false, defaultValue = "0") int id){
-        userService.update(id, user);
+            @RequestParam(name = "id", required = false, defaultValue = "0") long id){
+        user.setId(id);
+        userService.update(user);
         return "redirect:/user";
     }
     @DeleteMapping(params = "id")

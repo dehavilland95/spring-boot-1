@@ -4,42 +4,36 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.TypedQuery;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 import ru.volobuev.course.models.User;
-
 import java.util.List;
 
-@Transactional
+
 @Component
-public class UserDaoImpl {
+public class UserDaoImpl implements UserDao {
     @PersistenceContext
     private EntityManager entityManager;
 
-//    @Transactional(readOnly = true)
     public List<User> findAll() {
         return entityManager.createQuery("select u from User u", User.class).getResultList();
     }
 
-//    @Transactional(readOnly = true)
     public User findById(long id) {
-//        TypedQuery<User> query = entityManager.createQuery("select u from User u where u.id = :id", User.class);
-//        query.setParameter("id", id);
-//        return query.getResultList().stream().findFirst().orElse(null);
-        //entityManager.
-        //return entityManager.find(User.class, id);
-        TypedQuery<User> query = entityManager.createQuery(
-                "SELECT u FROM User u WHERE u.id = :id", User.class);
-        User user =  query.setParameter("id", id)
-                .getSingleResult();
-        System.out.println(user);
-        return user;
+        try{
+            TypedQuery<User> query = entityManager.createQuery(
+                    "SELECT u FROM User u WHERE u.id = :id", User.class);
+            return query.setParameter("id", id)
+                    .getSingleResult();
+        }catch (Exception e){
+            System.out.println(e.getMessage());
+            return null;
+        }
     }
 
     public void save(User user) {
         entityManager.persist(user);
     }
-    public void update(long id, User user) {
-        User userToBeUpdate = findById(id);
+    public void update(User user) {
+        User userToBeUpdate = findById(user.getId());
         if(userToBeUpdate != null) {
             userToBeUpdate.setFirstName(user.getFirstName());
             userToBeUpdate.setLastName(user.getLastName());
@@ -49,6 +43,9 @@ public class UserDaoImpl {
         }
     }
     public void delete(long id) {
-        entityManager.remove(findById(id));
+        User user = findById(id);
+        if(user != null) {
+            entityManager.remove(user);
+        }
     }
 }
