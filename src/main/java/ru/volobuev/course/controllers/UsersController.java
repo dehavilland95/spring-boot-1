@@ -6,7 +6,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import ru.volobuev.course.models.User;
 import ru.volobuev.course.service.UserService;
-
 import java.util.List;
 
 @Controller
@@ -25,7 +24,6 @@ public class UsersController {
     public String show(
             @RequestParam(name = "id", required = false, defaultValue = "0") int id,
             Model model){
-        System.out.println(id);
         model.addAttribute("user", userService.getById(id));
         return "user/show";
     }
@@ -47,15 +45,12 @@ public class UsersController {
     }
     @PatchMapping(params = "id")
     public String update(
-            @ModelAttribute("user") User user,
-            @RequestParam(name = "id", required = false, defaultValue = "0") long id){
-        user.setId(id);
+            @ModelAttribute("user") User user){
         userService.update(user);
         return "redirect:/user";
     }
     @DeleteMapping(params = "id")
     public String delete(@RequestParam(name = "id", required = false, defaultValue = "0") int id){
-        System.out.println();
         userService.delete(id);
         return "redirect:/user";
     }
